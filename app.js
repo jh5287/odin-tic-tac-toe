@@ -2,6 +2,7 @@ const createGame = () => {
 
     let board = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
     let currentTurn = 'X';
+    let winner = false;
 
     const getCurrentTurn = () =>  currentTurn;
 
@@ -28,23 +29,23 @@ const createGame = () => {
 
     const checkWin = () => {
         if (board[0] === board[1] && board[1] === board[2]) {
-            console.log('You win!');
+            winner = true;
         } else if (board[3] === board[4] && board[4] === board[5]) {
-            console.log('You win!');
+            winner = true;
         } else if (board[6] === board[7] && board[7] === board[8]) {
-            console.log('You win!');
+            winner = true;
         } else if (board[0] === board[3] && board[3] === board[6]) {
-            console.log('You win!');
+            winner = true;
         } else if (board[1] === board[4] && board[4] === board[7]) {
-            console.log('You win!');
+            winner = true;
         } else if (board[2] === board[5] && board[5] === board[8]) {
-            console.log('You win!');
+            winner = true;
         } else if (board[0] === board[4] && board[4] === board[8]) {
-            console.log('You win!');
+            winner = true;
         } else if (board[2] === board[4] && board[4] === board[6]) {
-            console.log('You win!');
+            winner = true;
         } else {
-            console.log('Keep playing!');
+            winner = false;
         }
     }
 
@@ -53,11 +54,16 @@ const createGame = () => {
         
         if (board[position] === 'X' || board[position] === 'O') {
             console.log('Invalid move!');
-        } else {
+        } 
+        else if (winner) {
+            return winner;
+        }
+        else {
             board[position] = currentTurn;
             displayBoard();
             checkWin();
             setTurn();
+            return winner;
         }
     }
 return { takeTurn, displayBoard, getBoard, getCurrentTurn };
@@ -80,9 +86,20 @@ const screenController = () => {
 
     const clickHandler = (event) => {
         const index = event.target.getAttribute('data-index');
-        game.takeTurn(index);
+        let result = game.takeTurn(index);
         let selectedSquare = document.querySelector(`[data-index='${index}']`);
         selectedSquare.textContent = game.getCurrentTurn();
+        if (result === true) {
+            const squares = document.querySelectorAll('.square');
+            squares.forEach(square => {
+                square.removeEventListener('click', clickHandler);
+            });
+            const message = document.querySelector('.message');
+            message.textContent = `Player ${game.getCurrentTurn()} wins!`;
+            const restartButton = document.querySelector('.restart');
+            restartButton.style.display = 'block';
+        }
+        
     }
 
     const squares = document.querySelectorAll('.square');
@@ -94,3 +111,18 @@ const screenController = () => {
 
 
 screenController();
+
+
+
+
+
+const restartButton = document.querySelector('.restart');
+restartButton.style.display = 'none';
+restartButton.addEventListener('click', () => {
+    const boardDiv = document.querySelector('.board');
+    boardDiv.innerHTML = '';
+    screenController();
+    const message = document.querySelector('.message');
+    message.textContent = '';
+    restartButton.style.display = 'none';
+});
