@@ -53,6 +53,19 @@ body {
 
 
 
+.x-turn {
+    position: absolute;
+    top : 20%;
+    right: 38%;
+}
+
+
+.o-turn {
+    position: absolute;
+    top : 20%;
+    left: 38%;
+}
+
 footer {
     width: 100%;
     font-weight: bold;

@@ -41,22 +41,31 @@ const createGame = () => {
     const checkWin = () => {
         if (board[0] === board[1] && board[1] === board[2]) {
             winner = true;
+            return true;
         } else if (board[3] === board[4] && board[4] === board[5]) {
             winner = true;
+            return true;
         } else if (board[6] === board[7] && board[7] === board[8]) {
             winner = true;
+            return true;
         } else if (board[0] === board[3] && board[3] === board[6]) {
             winner = true;
+            return true;
         } else if (board[1] === board[4] && board[4] === board[7]) {
             winner = true;
+            return true;
         } else if (board[2] === board[5] && board[5] === board[8]) {
             winner = true;
+            return true;
         } else if (board[0] === board[4] && board[4] === board[8]) {
             winner = true;
+            return true;
         } else if (board[2] === board[4] && board[4] === board[6]) {
             winner = true;
+            return true;
         } else {
             winner = false;
+            return false;
         }
     }
 
@@ -77,7 +86,9 @@ const createGame = () => {
                 return 500;
             }
             displayBoard();
-            checkWin();
+            if (checkWin()){
+                return winner;      //return early so currentTurn doesn't change
+            }
             setTurn();
             return winner;
         }
@@ -89,9 +100,17 @@ return { takeTurn, displayBoard, getBoard, getCurrentTurn };
 
 
 const screenController = () => {
+    
     const boardDiv = document.querySelector('.board');
     const game = createGame();
     const board = game.getBoard();
+    const xTurn = document.querySelector('.x-turn');
+    xTurn.style.display = 'none';
+    const oTurn = document.querySelector('.o-turn');
+    oTurn.style.display = 'none';
+    (game.getCurrentTurn() === 'X' ?xTurn.style.display = 'block': oTurn.style.display = 'block');
+
+
     board.forEach((element, index) => {
         const square = document.createElement('button');
         square.classList.add('square');
@@ -101,12 +120,23 @@ const screenController = () => {
     });
 
     const clickHandler = (event) => {
+        
         const index = event.target.getAttribute('data-index');
+        let currentTurn = game.getCurrentTurn();
         let result = game.takeTurn(index);
 
         if (result !== 401) {// 401 is the error code for invalid move
             let selectedSquare = document.querySelector(`[data-index='${index}']`);
-            selectedSquare.textContent = game.getCurrentTurn();
+            selectedSquare.textContent = currentTurn;
+            if (game.getCurrentTurn() === 'X') {
+                xTurn.style.display = 'block';
+                oTurn.style.display = 'none';
+            }
+            else {
+                xTurn.style.display = 'none';
+                oTurn.style.display = 'block';
+            }
+            
         }
         if (result === 500) { // 500 is the code for a tie
             const message = document.querySelector('.message');
