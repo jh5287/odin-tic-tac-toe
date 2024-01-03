@@ -4,6 +4,17 @@ const createGame = () => {
     let currentTurn = 'X';
     let winner = false;
 
+
+    const checkFullBoard = () => {
+        let fullBoard = true;
+        board.forEach(element => {
+            if (element !== 'X' && element !== 'O') {
+                fullBoard = false;
+            }
+        });
+        return fullBoard;
+    }
+
     const getCurrentTurn = () =>  currentTurn;
 
     const setTurn = () => {
@@ -61,6 +72,10 @@ const createGame = () => {
         }
         else {
             board[position] = currentTurn;
+            if (checkFullBoard()) {
+                console.log('Tie game!');
+                return 500;
+            }
             displayBoard();
             checkWin();
             setTurn();
@@ -93,6 +108,12 @@ const screenController = () => {
             let selectedSquare = document.querySelector(`[data-index='${index}']`);
             selectedSquare.textContent = game.getCurrentTurn();
         }
+        if (result === 500) { // 500 is the code for a tie
+            const message = document.querySelector('.message');
+            message.textContent = 'Tie game!';
+            const modal = document.querySelector('.modal');
+            modal.style.display = 'block';
+        }
         
         if (result === true) { // true is the code for a win
             const squares = document.querySelectorAll('.square');
@@ -101,8 +122,9 @@ const screenController = () => {
             });
             const message = document.querySelector('.message');
             message.textContent = `Player ${game.getCurrentTurn()} wins!`;
-            const restartButton = document.querySelector('.restart');
-            restartButton.style.display = 'block';
+
+            const modal = document.querySelector('.modal');
+            modal.style.display = 'block';
         }
         
     }
@@ -122,12 +144,12 @@ screenController();
 
 
 const restartButton = document.querySelector('.restart');
-restartButton.style.display = 'none';
 restartButton.addEventListener('click', () => {
     const boardDiv = document.querySelector('.board');
-    boardDiv.innerHTML = '';
+    boardDiv.textContent = '';
     screenController();
     const message = document.querySelector('.message');
     message.textContent = '';
-    restartButton.style.display = 'none';
+    const modal = document.querySelector('.modal');
+    modal.style.display = 'none';
 });
