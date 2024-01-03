@@ -54,6 +54,7 @@ const createGame = () => {
         
         if (board[position] === 'X' || board[position] === 'O') {
             console.log('Invalid move!');
+            return 401;
         } 
         else if (winner) {
             return winner;
@@ -87,9 +88,13 @@ const screenController = () => {
     const clickHandler = (event) => {
         const index = event.target.getAttribute('data-index');
         let result = game.takeTurn(index);
-        let selectedSquare = document.querySelector(`[data-index='${index}']`);
-        selectedSquare.textContent = game.getCurrentTurn();
-        if (result === true) {
+
+        if (result !== 401) {// 401 is the error code for invalid move
+            let selectedSquare = document.querySelector(`[data-index='${index}']`);
+            selectedSquare.textContent = game.getCurrentTurn();
+        }
+        
+        if (result === true) { // true is the code for a win
             const squares = document.querySelectorAll('.square');
             squares.forEach(square => {
                 square.removeEventListener('click', clickHandler);
